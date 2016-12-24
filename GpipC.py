@@ -1,4 +1,4 @@
-# -*- coding:utf-8 -*-
+# -*- coding: utf-8 -*-
 import optparse
 def main():
     parser = optparse.OptionParser("usage%prog -n <IP 数量> -f <保存的文件名>")
@@ -7,7 +7,7 @@ def main():
     (options,args)= parser.parse_args()
     if(options.IPnum == None):
         print parser.usage
-        print "请输入要提取的ip数量"
+        print "请输入要提取的ip数量"``
     else:
         IPnum = options.IPnum
     if(options.FileName == None):
