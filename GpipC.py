@@ -11,12 +11,12 @@ thread_list=[]
 def main():
     parser = optparse.OptionParser(u"usage%prog -n '<IP 数量>' [-f '<保存的文件名>'] [-t '<进程数(默认为30)>'] [-p '<端口号>(用','分割)']")
     parser.add_option('-n',dest="IPnum",type="string",help=u'要抓取的ip数量')
-    parser.add_option('-f',dest="FileName",type="string",help=u'要保存的文件名')
+    parser.add_option('-f',dest="FileName",type="string",help=u'保存验证完成的文件名')
     parser.add_option('-t',dest="threadnum",type="int",help=u"验证代理线程数量(验证专用)")
     parser.add_option('-p',dest="ports",type='string',help=u"要扫描的端口号，用','分割")
     parser.add_option('-y',dest="filen",type="string",help=u"需要验证的文件名")
     (options,args)= parser.parse_args()
-    if options.filen != None and options.threadnum != None and options.IPnum == None and options.FileName == None and options.ports == None:
+    if options.filen != None and options.threadnum != None and options.IPnum == None and options.FileName != None and options.ports == None:
         filen = options.filen
         threadnum = options.threadnum
         try:
