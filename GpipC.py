@@ -16,9 +16,11 @@ def main():
     parser.add_option('-p',dest="ports",type='string',help=u"要扫描的端口号，用','分割")
     parser.add_option('-y',dest="filen",type="string",help=u"需要验证的文件名")
     (options,args)= parser.parse_args()
+    """验证代理"""
     if options.filen != None and options.threadnum != None and options.IPnum == None and options.FileName != None and options.ports == None:
         filen = options.filen
         threadnum = options.threadnum
+        FileName = options.FileName
         try:
             f = open(filen,'r')
         except IOError as e:
@@ -32,7 +34,7 @@ def main():
                 break
         f.close()
         for ip in iplist:
-            t = threading.Thread(target=validateIP,args=(filen,ip))
+            t = threading.Thread(target=validateIP,args=(FileName,ip))
             thread_list.append(t)
         for t in thread_list:
             if len(threading.enumerate()) < threadnum:
