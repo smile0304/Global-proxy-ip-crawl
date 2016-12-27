@@ -39,7 +39,11 @@ def main():
             else:
                 break
         f.close()
-        fsave = open(FileName,'w')
+        try:
+            fsave = open(FileName,'w')
+        except IOError as e:
+            print u"%s不存在，请检查输入的文件名" % (FileName)
+            exit()
         for ip in iplist:
             t = threading.Thread(target=validateIP,args=(fsave,ip))
             thread_list.append(t)
@@ -61,7 +65,7 @@ def main():
     '-f'      "验证完成的代理IP保存地址"
     '-j'      "当网页抓取的代理不够时，自行生成代理IP的进程数"
     '-t'      "验证代理IP启动的线程数"
-    '-p'      "当网页住区的代理不够时，自行生成代理ip要扫描的端口号"
+    '-p'      "当网页抓取的代理不够时，自行生成代理ip要扫描的端口号"
     """
     if options.IPnum != None and options.FileName != None and options.processnum != None and options.threadnum != None and options.ports != None and options.filen == None:
         IPnum = options.IPnum
@@ -69,6 +73,8 @@ def main():
         processnum = options.processnum
         threadnum = options.threadnum
         ports = options.ports
+        proxy_list = get666ip()
+        writeip(FileName,proxy_list)
 
 """
     #判断用户输入

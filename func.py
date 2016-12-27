@@ -91,7 +91,11 @@ def validateIP(fileObject,ip):
     iplist      验证成功的ip列表
 """
 def writeip(filename,iplist):
-    f = open(filename,'w')
+    try:
+        f = open(filename,'w')
+    except Exception,e:
+        print u"%s不存在，请检查输入的文件名" % (filename)
+        exit()
     if iplist:
         for ip in iplist:
             f.write(ip+"\n")
@@ -117,13 +121,6 @@ def run(filename,ports):
         if ip != None:
             writeip(filename,ip)
             getnum()
-"""
-判断ip的总数量
-    返回 ip的总数量
-"""
-def getnum():
-    flage = flage+1
-    return flage
 """
     url="http://www.xicidaili.com/nn/"
 	在网页中抓取代理ip
