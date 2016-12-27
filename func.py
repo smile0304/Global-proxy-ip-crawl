@@ -64,28 +64,27 @@ def ProxyVerification(ip,port):
 		print "[-]Nothing proxy------->%s" %(ip)
 """
     验证网页端抓取的代理
-    传入 一个代理ip的列表
+    fileObject 一个文件对象
+    ip  一个代理ip的列表
     [192.168.0.0:8080,127.0.0.1:1111]
 """
-def validateIP(filename,ip):
+def validateIP(fileObject,ip):
     url = "http://ip.chinaz.com/getip.aspx"
     socket.setdefaulttimeout(3)
     proxy_host = "http://"+ip
     proxy_temp= {"http":proxy_host}
     '''上锁'''
-    mutex.acquire()
-    print "[*] test proxy--------->%s" % (ip)
     try:
         res = urllib.urlopen(url,proxies=proxy_temp).read()
+        mutex.acquire()
         print "[+]find proxy------->%s" % (ip)
-        writewebip(filename,ip)
+        writewebip(fileObject,ip)
         '''解锁'''
         mutex.release()
     except Exception,e:
-        print "[-]Nothing proxy------->%s" %(ip)
-        '''解锁'''
+        mutex.acquire()
+        print "[-]useless proxy---->%s" % (ip)
         mutex.release()
-
 """
 保存可用的代理ip
     filename    要保存的文件名
@@ -103,10 +102,8 @@ def writeip(filename,iplist):
     filename    要保存的文件名
     ip          要写入的ip
 """
-def writewebip(filename,ip):
-    f = open(filename,'w')
-    f.write(ip+"\n")
-    f.close
+def writewebip(fileObject,ip):
+    fileObject.write(ip+"\n")
 """
     主进程方法
     neednum     一共需要的ip数量
@@ -133,25 +130,23 @@ def getnum():
     返回
         proxy   一个ip列表
 """
-"""
-def getxiciip():
-	proxy = []
-	for i in range(1,10):
+def getxiciproxyip():
+    proxy = []
+    for i in range(1,10):
         try:
             url = 'http://www.xicidaili.com/nn/'+str(i)
-			req = urllib2.Request(url,headers=header)
-			res = urllib2.urlopen(req).read()
-			soup = BeautifulSoup(res)
-			ips = soup.findAll('tr')
+            rea = urllib2.Request(url,headers=header)
+            res = urllib2.urlopen(req).read()
+            soup = BeautifulSoup(res)
+            ips = soup.findAll('tr')
             for x in range(1,len(ips)):
                 ip = ips[x]
-                tds = ip.findAll("td")
+                ds = ip.findAll("td")
                 ip_temp = tds[1].contents[0]+":"+tds[2].contents[0]
                 proxy.append(ip_temp)
-		except:
-			continue
-		return proxy
-        """
+        except:
+            continue
+    return proxy
 """
     获取代理666的ip
     在网页中抓取代理ip
@@ -167,3 +162,11 @@ def get666ip():
     except:
         print "网络连接失败"
     return proxy
+"""
+    读取文件的行数
+    f   一个文件对象
+    返回: 文件的行数
+"""
+def readline(fileObject):
+    num = len(fileObject.readlines())
+    return num
