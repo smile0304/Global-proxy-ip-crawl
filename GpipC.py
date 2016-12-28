@@ -149,6 +149,7 @@ def main():
                     th.join()
                 except Exception, e:
                     pass
+			fsave.close()
             """返回当前文件的行数，ip数量"""
             try:
                 fsave = open(FileName, 'r')
