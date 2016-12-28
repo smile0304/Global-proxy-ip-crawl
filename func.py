@@ -44,24 +44,25 @@ def getip():
 验证随机生成代理
 	传入参数:
 				ip	ip地址
-				port 端口号
+				ports 端口号列表
 	返回参数：
 			返回可用的代理地址
 			127.0.0.1:8080
 """
-def ProxyVerification(ip,port):
+def ProxyVerification(ip,ports):
 	url = "http://ip.chinaz.com/getip.aspx"
 	socket.setdefaulttimeout(3)
-	proxy_host= "http://"+ip+":"+port
-	proxy_temp = {"http":proxy_host}
-	proxy = ip+":"+port
-	print "[*] test proxy------->%s:%s" % (ip,port)
-	try:
-		res = urllib.urlopen(url,proxies=proxy_temp).read()
-		print "[+]find proxy------->%s:%s" % (ip,port)
-		return proxy
-	except Exception,e:
-		print "[-]Nothing proxy------->%s" %(ip)
+	for port in ports:
+		proxy_host= "http://"+ip+":"+port
+		proxy_temp = {"http":proxy_host}
+		proxy = ip+":"+port
+		print "[*] test proxy------->%s:%s" % (ip,port)
+		try:
+			res = urllib.urlopen(url,proxies=proxy_temp).read()
+			print "[+]find proxy------->%s:%s" % (ip,port)
+			return proxy
+		except Exception,e:
+			print "[-]Nothing proxy------->%s" %(ip)
 """
     验证网页端抓取的代理
     fileObject 一个文件对象
@@ -95,7 +96,7 @@ def writeip(filename,iplist):
         f = open(filename,'w')
     except Exception,e:
         print u"%s不存在，请检查输入的文件名" % (filename)
-        exit()
+        exit(0)
     if iplist:
         for ip in iplist:
             f.write(ip+"\n")
@@ -129,16 +130,16 @@ def run(filename,ports):
 """
 def getxiciproxyip():
     proxy = []
-    for i in range(1,10):
+    for i in range(1,5):
         try:
             url = 'http://www.xicidaili.com/nn/'+str(i)
-            rea = urllib2.Request(url,headers=header)
+            req = urllib2.Request(url,headers=header)
             res = urllib2.urlopen(req).read()
             soup = BeautifulSoup(res)
             ips = soup.findAll('tr')
             for x in range(1,len(ips)):
                 ip = ips[x]
-                ds = ip.findAll("td")
+                tds = ip.findAll("td")
                 ip_temp = tds[1].contents[0]+":"+tds[2].contents[0]
                 proxy.append(ip_temp)
         except:
@@ -152,7 +153,7 @@ def getxiciproxyip():
 def get666ip():
     proxy = []
     try:
-        url = "http://ttvp.daxiangip.com/ip/?tid=xxxxxxx&num=5000"
+        url = "http://ttvp.daxiangip.com/ip/?tid=557671197349291&num=5000"
         req = urllib2.Request(url,headers=header)
         html = urllib2.urlopen(req).read()
         proxy = html.split('\r\n')

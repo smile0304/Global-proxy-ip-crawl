@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
 import optparse
-from func import globalip,ProxyVerification,writeip,run,getnum,validateIP,getxiciproxyip
+from func import globalip,ProxyVerification,writeip,run,validateIP,getxiciproxyip,readline,get666ip
 from multiprocessing import Pool
 import threading
 import time
-iplist = []
 num = 0
 flage = 0
 thread_list=[]
@@ -27,6 +26,7 @@ def main():
         filen = options.filen
         threadnum = options.threadnum
         FileName = options.FileName
+        iplist = []
         try:
             f = open(filen,'r')
         except IOError as e:
@@ -36,8 +36,6 @@ def main():
             if line:
                 line = line.strip('\n')
                 iplist.append(line)
-            else:
-                break
         f.close()
         try:
             fsave = open(FileName,'w')
@@ -72,9 +70,118 @@ def main():
         FileName = options.FileName
         processnum = options.processnum
         threadnum = options.threadnum
-        ports = options.ports
-        proxy_list = get666ip()
-        writeip(FileName,proxy_list)
+        ports = str(options.ports).split(',')
+        iplist = get666ip()
+        TransferIP = []
+        testIP = []
+        try:
+            fsave = open(FileName,'w')
+        except IOError as e:
+            print u"%s不存在，请检查输入的文件名" % (FileName)
+            exit()
+        thread_list = []
+        for ip in iplist:
+            t = threading.Thread(target=validateIP,args=(fsave,ip))
+            thread_list.append(t)
+        for t in thread_list:
+            if len(threading.enumerate()) < threadnum:
+                t.start()
+                #print len(threading.enumerate())
+            else:
+                time.sleep(0.1)
+        for t in thread_list:
+            try:
+                t.join()
+            except Exception,e:
+                pass
+        fsave.close()
+        """返回当前文件的行数，ip数量"""
+        try:
+            fsave = open(FileName,'r')
+            linenum = readline(fsave)
+        except Exception:
+            print u"读取文件异常"
+        fsave.close()
+        if linenum < IPnum:
+            thread_list = []
+            iplist = getxiciproxyip()
+            try:
+                fsave = open(FileName,'a')
+            except IOError as e:
+                print u"打开文件异常"
+                exit()
+            for ip in iplist:
+                th = threading.Thread(target=validateIP,args=(fsave,ip))
+                thread_list.append(th)
+            for th in thread_list:
+                if len(threading.enumerate()) < threadnum:
+                    th.start()
+                    #print len(threading.enumerate())
+                else:
+                    time.sleep(0.1)
+            for th in thread_list:
+                try:
+                    th.join()
+                except Exception,e:
+                    pass
+            """返回当前文件的行数，ip数量"""
+            try:
+                fsave = open(FileName,'r')
+                linenum = readline(fsave)
+            except Exception:
+                print u"读取文件异常"
+            fsave.close()
+            if linenum < IPnum:
+                while True:
+                    if linenum < IPnum:
+                        thread_list = []
+                        need=(int(IPnum)-int(linenum))*10
+                        pool = Pool(processnum)
+                        for processn in range(need):
+                            res = pool.apply_async(func=globalip)
+                            TransferIP.append(res)
+                        pool.close()
+                        pool.join()
+                        for res in TransferIP:
+                            testIP.append(res.get())
+                        for ip in testIP:
+                            th = threading.Thread(target=ProxyVerification,args=(ip,ports))
+                            thread2_list.append(th)
+                        for th in thread_list:
+                            if len(threading.enumerate()) < threadnum:
+                                th.start()
+                                #print len(threading.enumerate())
+                            else:
+                                time.sleep(0.1)
+                        for th in thread_list:
+                            try:
+                                th.join()
+                            except Exception,e:
+                                pass
+                    else:
+                        try:
+                            fsave = open(FileName,'r')
+                            linenum = readline(fsave)
+                            print "一共找到%d条可用代理!" % (linenum)
+                        except Exception:
+                            print u"读取文件异常"
+                        fsave.close()
+            else:
+                try:
+                    fsave = open(FileName,'r')
+                    linenum = readline(fsave)
+                    print "一共找到%d条可用代理!" % (linenum)
+                except Exception:
+                    print u"读取文件异常"
+                fsave.close()
+        else:
+            try:
+                fsave = open(FileName,'r')
+                linenum = readline(fsave)
+                print "一共找到%d条可用代理!" % (linenum)
+            except Exception:
+                print u"读取文件异常"
+            fsave.close()
 
 """
     #判断用户输入
