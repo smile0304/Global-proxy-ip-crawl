@@ -134,6 +134,11 @@ def main():
             if linenum < IPnum:
                 while True:
                     if linenum < IPnum:
+                        try:
+                            fsave = open(FileName,'a')
+                        except IOError as e:
+                            print u"打开文件异常"
+                            exit()
                         thread_list = []
                         need=(int(IPnum)-int(linenum))*10
                         pool = Pool(processnum)
@@ -145,19 +150,20 @@ def main():
                         for res in TransferIP:
                             testIP.append(res.get())
                         for ip in testIP:
-                            th = threading.Thread(target=ProxyVerification,args=(ip,ports))
-                            thread2_list.append(th)
-                        for th in thread_list:
+                            t = threading.Thread(target=ProxyVerification,args=(fsave,ip,ports))
+                            thread_list.append(t)
+                        for t in thread_list:
                             if len(threading.enumerate()) < threadnum:
-                                th.start()
+                                t.start()
                                 #print len(threading.enumerate())
                             else:
                                 time.sleep(0.1)
-                        for th in thread_list:
+                        for t in thread_list:
                             try:
-                                th.join()
+                                t.join()
                             except Exception,e:
                                 pass
+                        f.close()
                     else:
                         try:
                             fsave = open(FileName,'r')

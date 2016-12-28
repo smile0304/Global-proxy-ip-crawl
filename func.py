@@ -43,26 +43,27 @@ def getip():
 """
 验证随机生成代理
 	传入参数:
+                fileObject 一个文件对象
 				ip	ip地址
 				ports 端口号列表
-	返回参数：
-			返回可用的代理地址
-			127.0.0.1:8080
 """
-def ProxyVerification(ip,ports):
+def ProxyVerification(fileObject,ip,ports):
 	url = "http://ip.chinaz.com/getip.aspx"
 	socket.setdefaulttimeout(3)
 	for port in ports:
 		proxy_host= "http://"+ip+":"+port
 		proxy_temp = {"http":proxy_host}
 		proxy = ip+":"+port
-		print "[*] test proxy------->%s:%s" % (ip,port)
 		try:
 			res = urllib.urlopen(url,proxies=proxy_temp).read()
+			mutex.acquire()
 			print "[+]find proxy------->%s:%s" % (ip,port)
-			return proxy
+			writewebip(fileObject,proxy)
+			mutex.release()
 		except Exception,e:
-			print "[-]Nothing proxy------->%s" %(ip)
+			mutex.acquire()
+			print "[-]Nothing proxy------->%s:%s" % (ip,port)
+			mutex.release()
 """
     验证网页端抓取的代理
     fileObject 一个文件对象
@@ -153,7 +154,7 @@ def getxiciproxyip():
 def get666ip():
     proxy = []
     try:
-        url = "http://ttvp.daxiangip.com/ip/?tid=557671197349291&num=5000"
+        url = "http://ttvp.daxiangip.com/ip/?tid=xxxxxxxxx&num=5000"
         req = urllib2.Request(url,headers=header)
         html = urllib2.urlopen(req).read()
         proxy = html.split('\r\n')
