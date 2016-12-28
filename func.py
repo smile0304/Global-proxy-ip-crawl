@@ -57,7 +57,7 @@ def ProxyVerification(fileObject, ip, ports):
     url = "http://ip.chinaz.com/getip.aspx"
     socket.setdefaulttimeout(3)
     for port in ports:
-        proxy_host = "http://" + ip + ":" + port
+        proxy_host = "http://" +''+':'+''+'@'+ ip + ":" + port
         proxy_temp = {"http": proxy_host}
         proxy = ip + ":" + port
         try:
@@ -81,7 +81,7 @@ def ProxyVerification(fileObject, ip, ports):
 def validateIP(fileObject, ip):
     url = "http://ip.chinaz.com/getip.aspx"
     socket.setdefaulttimeout(3)
-    proxy_host = "http://" + ip
+    proxy_host = "http://" +''+':'+''+'@'+ ip
     proxy_temp = {"http": proxy_host}
     '''上锁'''
     try:
