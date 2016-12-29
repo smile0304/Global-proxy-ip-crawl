@@ -4,6 +4,8 @@ from func import globalip, ProxyVerification, writeip, run, validateIP, getxicip
 from multiprocessing import Pool
 import threading
 import time
+import sys
+import signal
 num = 0
 flage = 0
 kztest=u"""
@@ -111,7 +113,6 @@ def main():
         for t in thread_list:
             if len(threading.enumerate()) < threadnum:
                 t.start()
-                # print len(threading.enumerate())
             else:
                 time.sleep(0.1)
         for t in thread_list:
@@ -127,7 +128,7 @@ def main():
         except Exception:
             print u"读取文件异常"
         fsave.close()
-        if linenum < IPnum:
+        if int(linenum) < int(IPnum):
             thread_list = []
             iplist = getxiciproxyip()
             try:
@@ -157,16 +158,23 @@ def main():
             except Exception:
                 print u"读取文件异常"
             fsave.close()
-            if linenum < IPnum:
+            if int(linenum) < int(IPnum):
+                need = (int(IPnum) - int(linenum)) * 10
                 while True:
-                    if linenum < IPnum:
+                    print linenum                            print 444444444444444444444444444444444
+                    print IPnum
+                    time.sleep(5)
+                    if int(linenum) <= int(IPnum):
+                        print int(linenum)<int(IPnum)
+                        print linenum
+                        print IPnum
+                        time.sleep(5)
                         try:
                             fsave = open(FileName, 'a')
                         except IOError as e:
                             print u"打开文件异常"
                             exit()
                         thread_list = []
-                        need = (int(IPnum) - int(linenum)) * 10
                         pool = Pool(processnum)
                         for processn in range(need):
                             res = pool.apply_async(func=globalip)
@@ -191,6 +199,15 @@ def main():
                             except Exception, e:
                                 pass
                         fsave.close()
+                        try:
+                            fsave = open(FileName, 'r')
+                            linenum = readline(fsave)
+                            print linenum
+                            time.slppe(3)
+                        except Exception:
+                            continue
+                        finally:
+                            fsave.close()
                     else:
                         try:
                             fsave = open(FileName, 'r')
@@ -198,7 +215,10 @@ def main():
                             print "一共找到%d条可用代理!" % (linenum)
                         except Exception:
                             print u"读取文件异常"
-                        fsave.close()
+                        finally:
+                            fsave.close()
+                            exit(0)
+
             else:
                 try:
                     fsave = open(FileName, 'r')
@@ -206,7 +226,10 @@ def main():
                     print "一共找到%d条可用代理!" % (linenum)
                 except Exception:
                     print u"读取文件异常"
-                fsave.close()
+                finally:
+                    fsave.close()
+                    exit(0)
+
         else:
             try:
                 fsave = open(FileName, 'r')
@@ -214,7 +237,10 @@ def main():
                 print "一共找到%d条可用代理!" % (linenum)
             except Exception:
                 print u"读取文件异常"
-            fsave.close()
+            finally:
+                fsave.close()
+                exit(0)
+
     else:
         print kztest
 

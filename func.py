@@ -182,8 +182,6 @@ def get666ip():
     f   一个文件对象
     返回: 文件的行数
 """
-
-
 def readline(fileObject):
     num = len(fileObject.readlines())
     return num
