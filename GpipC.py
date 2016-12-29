@@ -6,7 +6,6 @@ import threading
 import time
 num = 0
 flage = 0
-thread_list = []
 kztest=u"""
 
 使用方法:
@@ -52,20 +51,21 @@ def main():
         threadnum = options.threadnum
         FileName = options.FileName
         iplist = []
+        thread_list = []
         try:
             f = open(filen, 'r')
         except IOError as e:
             print u"%s不存在，请检查输入的文件名" % (filen)
-        while True:
-            line = f.readline()
-            if line:
-                line = line.strip('\n')
-                iplist.append(line)
+            exit(0)
+        lines = f.readlines()
+        for line in lines:
+            line = line.strip('\n')
+            iplist.append(line)
         f.close()
         try:
             fsave = open(FileName, 'w')
         except IOError as e:
-            print u"%s不存在，请检查输入的文件名" % (FileName)
+            print u"%s文件异常" % (FileName)
             exit()
         for ip in iplist:
             t = threading.Thread(target=validateIP, args=(fsave, ip))
@@ -149,7 +149,7 @@ def main():
                     th.join()
                 except Exception, e:
                     pass
-			fsave.close()
+            fsave.close()
             """返回当前文件的行数，ip数量"""
             try:
                 fsave = open(FileName, 'r')

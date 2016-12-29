@@ -83,13 +83,11 @@ def validateIP(fileObject, ip):
     socket.setdefaulttimeout(3)
     proxy_host = "http://" +''+':'+''+'@'+ ip
     proxy_temp = {"http": proxy_host}
-    '''上锁'''
     try:
         res = urllib.urlopen(url, proxies=proxy_temp).read()
         mutex.acquire()
         print "[+]find proxy------->%s" % (ip)
         writewebip(fileObject, ip)
-        '''解锁'''
         mutex.release()
     except Exception, e:
         mutex.acquire()
