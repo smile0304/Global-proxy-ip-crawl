@@ -170,7 +170,7 @@ def getxiciproxyip():
 def get666ip():
     proxy = []
     try:
-        url = "http://ttvp.daxiangip.com/ip/?tid=xxxxxxxxx&num=5000"
+        url = "http://ttvp.daxiangip.com/ip/?tid=557671197349291&num=5000"
         req = urllib2.Request(url, headers=header)
         html = urllib2.urlopen(req).read()
         proxy = html.split('\r\n')

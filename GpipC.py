@@ -161,13 +161,9 @@ def main():
             if int(linenum) < int(IPnum):
                 need = (int(IPnum) - int(linenum)) * 10
                 while True:
-                    print linenum
-                    print IPnum
                     time.sleep(5)
                     if int(linenum) <= int(IPnum):
                         print int(linenum)<int(IPnum)
-                        print linenum
-                        print IPnum
                         time.sleep(5)
                         try:
                             fsave = open(FileName, 'a')
